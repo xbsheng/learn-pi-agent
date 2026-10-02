@@ -69,6 +69,8 @@ await session.prompt("看看当前目录，告诉我这是什么项目");
 
 ## 快速开始
 
+要求 **Node.js 24+**（直接运行 `.ts` 依赖 Node 的类型剥离能力，无需编译）。
+
 ```bash
 cd learn-pi-agent
 npm install
@@ -79,7 +81,7 @@ npm install
 
 npm run s01        # 起点：一次最简会话
 npm run s12        # 终点：多种机制集成
-npm test           # 权限策略的单元测试（不需要网络）
+npm test           # 权限策略与待办存储的单元测试（不需要网络/API）
 ```
 
 每章目录结构：
