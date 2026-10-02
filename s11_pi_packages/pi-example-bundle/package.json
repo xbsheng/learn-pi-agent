@@ -1,0 +1,16 @@
+{
+	"name": "pi-example-bundle",
+	"version": "0.1.0",
+	"description": "示例 pi package：打包一个扩展、一个 skill、一个 prompt 模板",
+	"type": "module",
+	"keywords": ["pi-package"],
+	"pi": {
+		"extensions": ["./extensions"],
+		"skills": ["./skills"],
+		"prompts": ["./prompts"]
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-coding-agent": "*",
+		"typebox": "*"
+	}
+}

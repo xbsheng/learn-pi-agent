@@ -1,0 +1,26 @@
+{
+  "name": "learn-pi-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "渐进式 pi agent harness 工程教程",
+  "scripts": {
+    "s01": "node s01_agent_session/code.ts",
+    "s02": "node s02_custom_tools/code.ts",
+    "s03": "node s03_permission_gate/code.ts",
+    "s04": "node s04_events_and_ui/code.ts",
+    "s05": "node s05_skills/code.ts",
+    "s06": "node s06_prompt_templates/code.ts",
+    "s07": "node s07_sessions/code.ts",
+    "s08": "node s08_subagents/code.ts",
+    "s09": "node s09_rpc/code.ts",
+    "s10": "node s10_custom_provider/code.ts",
+    "s11": "node s11_pi_packages/code.ts",
+    "s12": "node s12_full_harness/code.ts",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "0.85.1",
+    "typebox": "^1.3.7"
+  }
+}
