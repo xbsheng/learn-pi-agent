@@ -11,8 +11,8 @@ const css = `
     font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
     background:#fff;color:#18181b}
   .lp-logo{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;
-    font-size:30px;font-weight:700;color:#fff;background:linear-gradient(135deg,#3b82f6,#6366f1);
-    box-shadow:0 8px 24px rgba(59,130,246,.35)}
+    font-size:30px;font-weight:700;color:#fff;background:#000;
+    border:1px solid rgba(255,255,255,.14);box-shadow:0 8px 24px rgba(0,0,0,.4)}
   .lp-spin{width:22px;height:22px;border-radius:50%;border:2.5px solid #e4e4e7;border-top-color:#3b82f6;
     animation:lp-spin .8s linear infinite}
   @keyframes lp-spin{to{transform:rotate(360deg)}}
