@@ -18,7 +18,7 @@ const LOCALES = [
   { code: "en", label: "EN" },
 ] as const;
 
-const GITHUB_URL = "https://github.com/earendil-works/pi";
+const GITHUB_URL = "https://github.com/xbsheng/learn-pi-agent";
 
 export function Header() {
   const t = useTranslations("nav");
