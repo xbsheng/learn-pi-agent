@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # Learn Pi Agent — 真正的 Agent Harness 工程
 
 > 参照 [learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) 的课程结构，用 [pi](https://pi.dev) 讲同一件事：**Agency 来自模型，Harness 来自你。**
