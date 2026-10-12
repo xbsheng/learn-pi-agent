@@ -17,7 +17,9 @@
     "s10": "node s10_custom_provider/code.ts",
     "s11": "node s11_pi_packages/code.ts",
     "s12": "node s12_full_harness/code.ts",
-    "test": "node --test"
+    "test": "node --test",
+    "web:dev": "npm --prefix web run dev",
+    "web:build": "npm --prefix web run build"
   },
   "dependencies": {
     "@earendil-works/pi-coding-agent": "0.85.1",

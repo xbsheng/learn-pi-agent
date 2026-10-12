@@ -1,0 +1,92 @@
+{
+  "meta": { "title": "Learn Pi Agent", "description": "Agent harness engineering with pi: agency comes from the model, the harness comes from you" },
+  "nav": { "home": "Home", "timeline": "Learning path", "compare": "Compare", "layers": "Layers", "github": "GitHub" },
+  "home": {
+    "hero_title": "Learn Pi Agent",
+    "hero_subtitle": "Real agent harness engineering. pi already turns the loop; you just hang mechanisms on it.",
+    "start": "Start learning",
+    "core_pattern": "The core pattern",
+    "core_pattern_desc": "pi runs the same loop inside: call the model, run tools, feed results back. Your job is to hang mechanisms on that loop — tools, permission, events, knowledge, sessions, delegation, integration.",
+    "learning_path": "Learning path",
+    "learning_path_desc": "12 progressive chapters, from a single minimal session to many mechanisms in one AgentSession",
+    "layers_title": "Mechanism layers",
+    "layers_desc": "Four orthogonal concerns combine into a complete harness",
+    "loc": "LOC",
+    "learn_more": "Learn more",
+    "versions_in_layer": "chapters"
+  },
+  "version": {
+    "loc": "LOC",
+    "tools": "tools",
+    "prev": "Previous",
+    "next": "Next",
+    "whats_new": "What's new",
+    "tab_learn": "Learn",
+    "tab_code": "Source",
+    "tab_deep_dive": "Structure"
+  },
+  "timeline": {
+    "title": "Learning path",
+    "subtitle": "s01 to s12: hang your own mechanisms on pi's loop",
+    "layer_legend": "Legend",
+    "loc_growth": "Code growth",
+    "learn_more": "Learn more"
+  },
+  "layers": {
+    "title": "Mechanism layers",
+    "subtitle": "Four orthogonal concerns combine into a complete harness",
+    "loop": "Loop and action. pi ships the agent loop; here you give it hands, draw a boundary, and hang hooks on it.",
+    "knowledge": "Knowledge and context. On-demand skills, prompt templates, session branching and compaction are all, at heart, managing a finite context.",
+    "delegate": "Delegation and integration. Isolate tasks with subagents, drive pi across processes with RPC, and connect any model with a custom provider.",
+    "distribute": "Distribution and integration. Pack tools, skills, and templates into one installable unit, then assemble the machine."
+  },
+  "compare": {
+    "title": "Compare chapters",
+    "subtitle": "See what changed between any two chapters",
+    "select_a": "Chapter A",
+    "select_b": "Chapter B",
+    "loc_delta": "LOC delta",
+    "lines": "lines",
+    "new_tools_in_b": "New tools in B",
+    "new_classes_in_b": "New classes in B",
+    "new_functions_in_b": "New functions in B",
+    "tool_comparison": "Tool comparison",
+    "only_in": "Only in",
+    "shared": "Shared",
+    "none": "none",
+    "source_diff": "Source diff",
+    "empty_hint": "Pick two chapters above to compare."
+  },
+  "diff": {
+    "new_classes": "New classes",
+    "new_tools": "New tools",
+    "new_functions": "New functions",
+    "loc_delta": "LOC delta"
+  },
+  "mechanism": { "title": "Mechanism map" },
+  "structure": {
+    "classes": "Classes",
+    "functions": "Functions",
+    "none": "This example defines no classes."
+  },
+  "sessions": {
+    "s01": "AgentSession",
+    "s02": "Custom tools",
+    "s03": "Permission gate",
+    "s04": "Events and hooks",
+    "s05": "On-demand skills",
+    "s06": "Prompt templates",
+    "s07": "Sessions and branching",
+    "s08": "Subagents",
+    "s09": "RPC integration",
+    "s10": "Custom providers",
+    "s11": "Pi Package",
+    "s12": "The full harness"
+  },
+  "layer_labels": {
+    "loop": "Loop & Action",
+    "knowledge": "Knowledge & Context",
+    "delegate": "Delegation & Integration",
+    "distribute": "Distribution & Integration"
+  }
+}

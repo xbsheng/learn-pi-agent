@@ -3,3 +3,8 @@ node_modules/
 *.tmp
 .DS_Store
 dbg.ts
+
+# 教程站构建产物(章节数据由 web/scripts/extract-content.ts 生成)
+web/.next/
+web/out/
+web/src/data/generated/

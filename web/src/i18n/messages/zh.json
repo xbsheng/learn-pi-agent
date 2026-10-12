@@ -1,0 +1,92 @@
+{
+  "meta": { "title": "Learn Pi Agent", "description": "用 pi 讲 Agent Harness 工程：Agency 来自模型，Harness 来自你" },
+  "nav": { "home": "首页", "timeline": "学习路径", "compare": "章节对比", "layers": "机制分层", "github": "GitHub" },
+  "home": {
+    "hero_title": "Learn Pi Agent",
+    "hero_subtitle": "真正的 Agent Harness 工程。pi 已经转着循环，你只需要把机制挂上去。",
+    "start": "开始学习",
+    "core_pattern": "核心模式",
+    "core_pattern_desc": "pi 内部跑着同一个循环：调用模型、执行工具、回传结果。你要做的是在这个循环上挂机制 —— 工具、权限、事件、知识、会话、委派、集成。",
+    "learning_path": "学习路径",
+    "learning_path_desc": "12 个渐进式章节，从一次最简会话到多种机制装进同一个 AgentSession",
+    "layers_title": "机制分层",
+    "layers_desc": "四个正交的关注点组合成完整的 Harness",
+    "loc": "行",
+    "learn_more": "了解更多",
+    "versions_in_layer": "个章节"
+  },
+  "version": {
+    "loc": "行代码",
+    "tools": "个工具",
+    "prev": "上一章",
+    "next": "下一章",
+    "whats_new": "新增内容",
+    "tab_learn": "学习",
+    "tab_code": "源码",
+    "tab_deep_dive": "结构"
+  },
+  "timeline": {
+    "title": "学习路径",
+    "subtitle": "s01 到 s12：把自己的机制挂到 pi 的循环上",
+    "layer_legend": "机制图例",
+    "loc_growth": "代码量增长",
+    "learn_more": "了解更多"
+  },
+  "layers": {
+    "title": "机制分层",
+    "subtitle": "四个正交关注点组合成完整的 Harness",
+    "loop": "循环与行动。pi 内置 agent 循环，你在这里给它一双手、划一条边界、挂上钩子。",
+    "knowledge": "知识与上下文。按需技能、提示词模板、会话分支与压缩，本质都是在管理有限上下文。",
+    "delegate": "委派与集成。用子 agent 隔离任务，用 RPC 跨进程驱动，用自定义 Provider 接上任意模型。",
+    "distribute": "分发与综合。把工具、技能、模板打包成一个可安装单元，最后装成一台机器。"
+  },
+  "compare": {
+    "title": "章节对比",
+    "subtitle": "查看任意两个章节之间的变化",
+    "select_a": "章节 A",
+    "select_b": "章节 B",
+    "loc_delta": "代码量差异",
+    "lines": "行",
+    "new_tools_in_b": "B 中新增工具",
+    "new_classes_in_b": "B 中新增类",
+    "new_functions_in_b": "B 中新增函数",
+    "tool_comparison": "工具对比",
+    "only_in": "仅在",
+    "shared": "共有",
+    "none": "无",
+    "source_diff": "源码差异",
+    "empty_hint": "请在上方选择两个章节进行对比。"
+  },
+  "diff": {
+    "new_classes": "新增类",
+    "new_tools": "新增工具",
+    "new_functions": "新增函数",
+    "loc_delta": "代码量差异"
+  },
+  "mechanism": { "title": "机制定位" },
+  "structure": {
+    "classes": "类",
+    "functions": "函数",
+    "none": "本示例没有定义类。"
+  },
+  "sessions": {
+    "s01": "AgentSession",
+    "s02": "自定义工具",
+    "s03": "权限闸门",
+    "s04": "事件与钩子",
+    "s05": "Skill 按需加载",
+    "s06": "Prompt 模板",
+    "s07": "会话与分支",
+    "s08": "子 Agent",
+    "s09": "RPC 集成",
+    "s10": "自定义 Provider",
+    "s11": "Pi Package",
+    "s12": "完整 Harness"
+  },
+  "layer_labels": {
+    "loop": "循环与行动",
+    "knowledge": "知识与上下文",
+    "delegate": "委派与集成",
+    "distribute": "分发与综合"
+  }
+}
