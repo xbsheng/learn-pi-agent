@@ -4,7 +4,10 @@
  * 观察：session.subscribe() 打印每次 turn 和工具执行。
  * 干预：truncate.ts 在 tool_result 里截断过长的 bash 输出。
  *
- * 运行：
+ * Observe: session.subscribe() prints each turn and tool execution.
+ * Intervene: truncate.ts cuts over-long bash output in tool_result.
+ *
+ * 运行 / Run:
  *   npm run s04
  *   npm run s04 -- "只执行 `seq 1 20000`，不要加管道，然后告诉我最大的数"
  */
@@ -24,6 +27,8 @@ const { session } = await createAgentSession({
 	sessionManager: SessionManager.inMemory(),
 });
 
+// 观察类事件：只读，用来做日志、UI、计量。
+// Observation events: read-only, for logging, UI and metering.
 let turn = 0;
 const unsubscribe = session.subscribe((event) => {
 	switch (event.type) {
@@ -38,7 +43,7 @@ const unsubscribe = session.subscribe((event) => {
 			console.error(`  [tool←] ${event.toolName} ${event.isError ? "ERROR" : "ok"}`);
 			break;
 		case "turn_end":
-			console.error(`  [turn] ${event.toolResults.length} 个工具结果`);
+			console.error(`  [turn] ${event.toolResults.length} 个工具结果 / tool results`);
 			break;
 		case "message_update":
 			if (event.assistantMessageEvent.type === "text_delta") {

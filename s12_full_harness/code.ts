@@ -9,7 +9,15 @@
  *   s06 prompt 模板
  *   s08 子 agent（delegate）
  *
- * 运行：
+ * Load the earlier chapters' mechanisms back into one AgentSession:
+ *   s02 custom tools (todo_add / todo_list)
+ *   s03 permission gate (tool_call interception)
+ *   s04 result truncation (tool_result)
+ *   s05 on-demand skill
+ *   s06 prompt template
+ *   s08 subagent (delegate)
+ *
+ * 运行 / Run:
  *   npm run s12
  *   npm run s12 -- "把'完成 s12'加入待办，再让子 agent 统计 s01..s11 的 README.md 总字数"
  */
@@ -39,14 +47,18 @@ const delegate = defineTool({
 });
 
 // ── 装载 harness 机制 ────────────────────────────────────────────
+// ── Assemble the harness mechanisms ──────────────────────────────
 const loader = new DefaultResourceLoader({
 	cwd: process.cwd(),
 	agentDir: getAgentDir(),
 	// s03 权限闸门 + s04 结果截断
+	// s03 permission gate + s04 result truncation
 	extensionFactories: [permissionGate, truncateToolResults],
 	// s05 skill（release-notes）
+	// s05 skill (release-notes)
 	additionalSkillPaths: [resolve(import.meta.dirname, "../s05_skills/skills")],
 	// s06 prompt 模板（/review）
+	// s06 prompt template (/review)
 	additionalPromptTemplatePaths: [resolve(import.meta.dirname, "../s06_prompt_templates/prompts")],
 });
 await loader.reload();
@@ -54,11 +66,13 @@ await loader.reload();
 const { session } = await createAgentSession({
 	resourceLoader: loader,
 	// s02 自定义工具 + s08 delegate
+	// s02 custom tools + s08 delegate
 	customTools: [...createTodoTools(TODOS_FILE), delegate],
 	sessionManager: SessionManager.inMemory(),
 });
 
 // s04 观察：turn / 工具 / 截断提示
+// s04 observation: turns / tools / truncation
 let turn = 0;
 const unsubscribe = session.subscribe((event) => {
 	switch (event.type) {
@@ -87,7 +101,7 @@ const prompt =
 
 try {
 	await session.prompt(prompt);
-	console.log(`\n\n[主会话消息数] ${session.agent.state.messages.length}`);
+	console.log(`\n\n[主会话消息数 / main-session messages] ${session.agent.state.messages.length}`);
 } finally {
 	unsubscribe();
 	session.dispose();

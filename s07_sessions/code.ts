@@ -5,7 +5,11 @@
  * 2. 恢复最近的会话，问它暗号 —— 答对说明记忆来自磁盘。
  * 3. 打印会话列表与当前分支结构。
  *
- * 运行：
+ * 1. Create a persistent session, have the model remember a passphrase, then close it.
+ * 2. Resume the most recent session and ask for the passphrase — a correct answer means the memory came from disk.
+ * 3. Print the session list and the current branch.
+ *
+ * 运行 / Run:
  *   npm run s07
  */
 
@@ -23,35 +27,39 @@ function printStream(session: AgentSession) {
 }
 
 // ── 1. 新建持久会话 ──────────────────────────────────────────────
-console.log("[1] 新建持久会话，写入一条需要记住的信息\n");
+// ── 1. Create a persistent session ───────────────────────────────
+console.log("[1] 新建持久会话，写入一条需要记住的信息 / new persistent session\n");
 const sm1 = SessionManager.create(cwd);
 const { session: s1 } = await createAgentSession({ sessionManager: sm1 });
 const unsub1 = printStream(s1);
 await s1.prompt("请记住暗号：紫色犀牛。只回复'记住了'。");
-console.log(`\n    会话文件：${s1.sessionFile}`);
+console.log(`\n    会话文件 / session file：${s1.sessionFile}`);
 unsub1();
-s1.dispose(); // 关闭会话，模拟进程退出
+s1.dispose(); // 关闭会话，模拟进程退出 / close the session, simulating process exit
 
 // ── 2. 恢复最近的会话 ────────────────────────────────────────────
-console.log("\n[2] 用 continueRecent 重新打开，验证记忆来自磁盘\n");
+// ── 2. Resume the most recent session ────────────────────────────
+console.log("\n[2] 用 continueRecent 重新打开，验证记忆来自磁盘 / reopen and verify memory comes from disk\n");
 const sm2 = SessionManager.continueRecent(cwd);
 const { session: s2 } = await createAgentSession({ sessionManager: sm2 });
-console.log(`    恢复了 ${s2.agent.state.messages.length} 条历史消息`);
+console.log(`    恢复了 / restored ${s2.agent.state.messages.length} 条历史消息 / messages`);
 const unsub2 = printStream(s2);
 await s2.prompt("暗号是什么？只回答暗号本身。");
 console.log();
 unsub2();
 
 // ── 3. 会话树 ────────────────────────────────────────────────────
+// ── 3. The session tree ──────────────────────────────────────────
 const branch = sm2.getBranch();
 const leaf = sm2.getLeafEntry();
-console.log(`\n[3] 当前分支：${branch.length} 个条目，叶子 = ${leaf?.id}`);
+console.log(`\n[3] 当前分支 / current branch：${branch.length} 个条目 / entries，叶子 / leaf = ${leaf?.id}`);
 
 const sessions = await SessionManager.list(cwd);
-console.log(`\n    本项目共有 ${sessions.length} 个会话，最近 3 个：`);
+console.log(`\n    本项目共有 / sessions in this project: ${sessions.length}，最近 3 个 / latest 3：`);
 for (const info of sessions.slice(0, 3)) {
-	console.log(`    - ${info.modified.toISOString()}  ${info.messageCount} 条消息  ${info.firstMessage.slice(0, 30)}`);
+	console.log(`    - ${info.modified.toISOString()}  ${info.messageCount} 条消息 / messages  ${info.firstMessage.slice(0, 30)}`);
 }
 
 s2.dispose();
 console.log("\n提示：会话是 JSONL + id/parentId 的树，sm.branch(entryId) 即可从任意节点分叉。");
+console.log("Tip: a session is a JSONL tree of id/parentId; sm.branch(entryId) forks from any node.");

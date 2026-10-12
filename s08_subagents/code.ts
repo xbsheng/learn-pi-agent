@@ -4,7 +4,10 @@
  * 注册一个 delegate 工具：它开一个隔离的、只读的子会话跑任务，
  * 只把最终结论作为 tool_result 返回主会话。
  *
- * 运行：
+ * Register a delegate tool: it opens an isolated, read-only child session to run the task,
+ * and returns only the final conclusion to the main session as a tool_result.
+ *
+ * 运行 / Run:
  *   npm run s08
  *   npm run s08 -- "让子 agent 统计 s01 到 s08 各章 code.ts 的行数，你只汇总成一张表"
  */
@@ -24,6 +27,8 @@ const delegate = defineTool({
 		}),
 	}),
 	async execute(_toolCallId, params, signal, onUpdate) {
+		// onUpdate 把子 agent 的进度冒泡到主会话 UI。
+		// onUpdate bubbles the subagent's progress up to the main session UI.
 		onUpdate?.({ content: [{ type: "text", text: "子 agent 开始工作…" }] });
 		const answer = await runSubagent(
 			`当前工作目录：${process.cwd()}\n\n任务：${params.task}`,
@@ -33,6 +38,8 @@ const delegate = defineTool({
 			},
 		);
 		return {
+			// content 放结论（喂回主模型），details 放元数据（不进入上下文）。
+			// content holds the conclusion (fed back to the model); details holds metadata (not in context).
 			content: [{ type: "text", text: answer }],
 			details: { isolated: true, tools: ["read", "grep", "find", "ls"] },
 		};
@@ -49,7 +56,7 @@ const unsubscribe = session.subscribe((event) => {
 		process.stdout.write(event.assistantMessageEvent.delta);
 	}
 	if (event.type === "tool_execution_start") {
-		console.error(`\n[主会话工具] ${event.toolName}`);
+		console.error(`\n[主会话工具 / main-session tool] ${event.toolName}`);
 	}
 });
 
@@ -59,7 +66,7 @@ const prompt =
 
 try {
 	await session.prompt(prompt);
-	console.log(`\n\n[主会话消息数] ${session.agent.state.messages.length}`);
+	console.log(`\n\n[主会话消息数 / main-session messages] ${session.agent.state.messages.length}`);
 } finally {
 	unsubscribe();
 	session.dispose();

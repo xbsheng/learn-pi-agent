@@ -4,7 +4,10 @@
  * 把 permission.ts 作为内联扩展挂到会话上，再让模型执行几条命令，
  * 观察 tool_call 钩子如何放行 / 拦截。
  *
- * 运行：
+ * Attach permission.ts as an inline extension, then have the model run a few commands
+ * and watch how the tool_call hook allows or blocks them.
+ *
+ * 运行 / Run:
  *   npm run s03
  *   npm run s03 -- "依次执行：echo hello、ls、sudo rm -rf /var"
  */
@@ -12,6 +15,8 @@
 import { createAgentSession, DefaultResourceLoader, getAgentDir, SessionManager } from "@earendil-works/pi-coding-agent";
 import permissionGate from "./permission.ts";
 
+// extensionFactories 把扩展内联进资源加载器，等价于放进 ~/.pi/agent/extensions/。
+// extensionFactories inlines the extension into the resource loader, equivalent to dropping it in ~/.pi/agent/extensions/.
 const loader = new DefaultResourceLoader({
 	cwd: process.cwd(),
 	agentDir: getAgentDir(),

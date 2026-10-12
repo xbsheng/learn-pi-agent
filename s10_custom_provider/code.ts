@@ -5,19 +5,26 @@
  *   1. 编程式：ModelRuntime.registerProvider()，本章演示。
  *   2. 扩展式：provider.ts 里的 pi.registerProvider()，让 CLI/TUI 也能用。
  *
- * 不需要真的启动推理服务，本章只验证注册与模型选择生效。
+ * Two paths:
+ *   1. Programmatic: ModelRuntime.registerProvider(), shown here.
+ *   2. Extension: pi.registerProvider() in provider.ts, so the CLI/TUI can use it too.
  *
- * 运行：
+ * 不需要真的启动推理服务，本章只验证注册与模型选择生效。
+ * No real inference service is needed; this chapter only verifies registration and model selection.
+ *
+ * 运行 / Run:
  *   npm run s10
  */
 
 import { createAgentSession, ModelRuntime, SessionManager } from "@earendil-works/pi-coding-agent";
 
 // 默认会读 ~/.pi/agent/models.json 与 auth.json。
+// By default it reads ~/.pi/agent/models.json and auth.json.
 const runtime = await ModelRuntime.create();
 
 runtime.registerProvider("local-openai", {
 	// 任何 OpenAI 兼容服务：Ollama / LM Studio / vLLM / llama.cpp server …
+	// Any OpenAI-compatible service: Ollama / LM Studio / vLLM / llama.cpp server …
 	baseUrl: process.env.LOCAL_BASE_URL ?? "http://localhost:11434/v1",
 	apiKey: process.env.LOCAL_OPENAI_API_KEY ?? "not-needed",
 	api: "openai-completions",
@@ -27,6 +34,8 @@ runtime.registerProvider("local-openai", {
 			name: "Qwen2.5 Coder 7B (local)",
 			reasoning: false,
 			input: ["text"],
+			// contextWindow / maxTokens 直接影响压缩与截断，必须填对。
+			// contextWindow / maxTokens drive compaction and truncation; get them right.
 			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
 			contextWindow: 32768,
 			maxTokens: 8192,
@@ -34,24 +43,26 @@ runtime.registerProvider("local-openai", {
 	],
 });
 
-console.log(`已注册的 provider id：${runtime.getRegisteredProviderIds().join(", ")}`);
+console.log(`已注册的 provider id / registered provider ids：${runtime.getRegisteredProviderIds().join(", ")}`);
 
 const model = runtime.getModel("local-openai", "qwen2.5-coder:7b");
 if (!model) {
-	console.error("未找到模型 local-openai/qwen2.5-coder:7b");
+	console.error("未找到模型 / model not found: local-openai/qwen2.5-coder:7b");
 	process.exit(1);
 }
-console.log(`找到模型：${model.provider}/${model.id}  context=${model.contextWindow}  maxTokens=${model.maxTokens}`);
+console.log(`找到模型 / found：${model.provider}/${model.id}  context=${model.contextWindow}  maxTokens=${model.maxTokens}`);
 
 // 把它设为会话模型（不真正发请求，因为本地服务没起）。
+// Set it as the session model (no real request, since the local service is not running).
 const { session } = await createAgentSession({
 	model,
 	modelRuntime: runtime,
 	sessionManager: SessionManager.inMemory(),
 });
-console.log(`会话当前模型：${session.model?.provider}/${session.model?.id}`);
+console.log(`会话当前模型 / session model：${session.model?.provider}/${session.model?.id}`);
 session.dispose();
 
-console.log("\n在 CLI/TUI 里使用扩展式注册：");
+console.log("\n在 CLI/TUI 里使用扩展式注册 / Use the extension form in the CLI/TUI:");
 console.log("  LOCAL_OPENAI_API_KEY=xxx pi -e ./s10_custom_provider/provider.ts --provider local-openai --model qwen2.5-coder:7b");
 console.log("或在 ~/.pi/agent/models.json 里声明自定义模型（无需写代码）。");
+console.log("Or declare custom models in ~/.pi/agent/models.json (no code needed).");
