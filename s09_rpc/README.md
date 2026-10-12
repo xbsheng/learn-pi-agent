@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s09: RPC 集成 — 用 JSONL 把 pi 接进任何程序
 
 [s08](../s08_subagents/) → `s09` → [s10](../s10_custom_provider/) → ...
@@ -72,6 +74,17 @@ pi --mode rpc --no-session
 
 扩展在 RPC 模式下也会调用 `ctx.ui.confirm()` 等对话框。这时 pi 会通过 stdout 发 `extension_ui_request`，客户端必须在 stdin 回 `extension_ui_response`。`ctx.hasUI` 在 RPC 模式是 `true` —— 所以 s03 的权限闸门在 RPC 下会真的弹出确认请求，而不是 fail-closed。协议细节见 pi 文档 `docs/rpc.md#extension-ui-protocol`。
 
+## 变更内容
+
+| 组件 | s08 | s09 |
+|---|---|---|
+| 驱动方式 | 同进程 SDK | 独立子进程 RPC |
+| 语言 | Node / TypeScript | 任意 |
+| 通道 | 函数调用 | stdin / stdout JSONL |
+| 隔离 | 共享进程 | 进程级隔离 |
+| 读 `agent.state` | 可以 | 只能靠事件 |
+| 循环 | 不变 | 不变 |
+
 ## 试一下
 
 ```bash
@@ -82,6 +95,11 @@ npm run s09 -- "用 bash 数一数当前目录有多少个 .ts 文件"
 你会看到客户端打印出命令响应、流式文本、最终 `agent_end`。整个过程 pi 是一个独立子进程，宿主只通过管道通信。
 
 换成任何语言都一样：把 `spawn` 换成 `subprocess.Popen` / `exec.Command`，把 `JSON.parse` 换成对应语言的解析，协议不变。
+
+再试几个：
+
+- `npm run s09 -- "读一下 package.json，告诉我项目名"` —— 观察 `tool_execution_start` 事件
+- 在客户端里把 `abort` 绑到一个 3 秒定时器，发一条「从 1 数到 100000」的 prompt，观察 `agent_end` 之前的中断
 
 ## 本章要点
 

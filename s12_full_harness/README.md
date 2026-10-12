@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s12: 完整 Harness — 多种机制，一个会话
 
 [s11](../s11_pi_packages/) → `s12`
@@ -92,6 +94,15 @@ const { session } = await createAgentSession({
 
 当这套组合要给别人用、要跨项目复用、要版本化时，按 s11 打包成一个 pi package。本章的装配就是那个包的「开发态」。
 
+## 变更内容
+
+| 组件 | s11 | s12 |
+|---|---|---|
+| 机制数量 | 每章一个 | 六个同会话 |
+| 加载 | 分散在各脚本 | `DefaultResourceLoader` 一次装配 |
+| 工具池 | 内置 + 单个 | 内置 + `todo_*` + `delegate` |
+| 循环 | 不变 | 不变（正交，无冲突） |
+
 ## 试一下
 
 ```bash
@@ -101,6 +112,11 @@ npm run s12 -- "依次执行 echo hi 和 sudo rm -rf /var"   # 观察权限闸�
 ```
 
 你会看到：`todo_add` 和 `delegate` 被调用（s02+s08）、turn 级追踪（s04）、危险命令被拦截（s03）、子 agent 在隔离上下文里干活（s08）。一个会话，全部生效。
+
+再试几个：
+
+- `npm run s12 -- "/review s02_custom_tools/store.ts"` —— prompt 模板（s06）展开，同时结果截断（s04）在生效
+- `npm run s12 -- "让子 agent 读 s01..s12 的 README，每个机制总结一句话"` —— 委派与技能同时在场，观察它们互不干扰
 
 ## 本章要点
 

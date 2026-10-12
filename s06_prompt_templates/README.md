@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s06: Prompt 模板 — 常用指令，一条斜杠命令展开
 
 [s05](../s05_skills/) → `s06` → [s07](../s07_sessions/) → ...
@@ -33,6 +35,16 @@ argument-hint: "<path>"
 3. **可简化处** — 可以删掉或换成标准库的代码
 
 不要泛泛而谈「建议增加测试」这类套话。没有发现就明说。
+```
+
+```
+用户: /review src/app.ts
+        │
+        ▼
+  expandPromptTemplates: true
+        │  把 $1 替换成 src/app.ts
+        ▼
+  模板正文 ──► 作为普通 user message 发给模型
 ```
 
 用户输入 `/review src/app.ts`，`$1` 被替换成 `src/app.ts`，整段展开后发给模型。
@@ -81,6 +93,16 @@ await session.prompt("/review src/app.ts", { expandPromptTemplates: true });
 | Skill（s05） | 模型自主 | 多文件工作流 | 生成 release notes |
 | Prompt 模板（s06） | 用户 `/命令` | 一段可带参提示词 | `/review <file>` |
 
+## 变更内容
+
+| 组件 | s05 | s06 |
+|---|---|---|
+| 触发者 | 模型自主判断 | 用户输入 `/命令` |
+| 内容形态 | 多文件工作流 | 一段可带参提示词 |
+| 加载时机 | 命中后 `read` 全文 | 发送前替换正文 |
+| 参数 | 无 | `$1`、`$@`、默认值 |
+| 循环 | 不变 | 不变 |
+
 ## 试一下
 
 ```bash
@@ -89,6 +111,11 @@ npm run s06 -- "s02_custom_tools/store.ts"   # 会展开成 /review s02_custom_t
 ```
 
 观察展开后的指令里带上了文件路径，模型按模板规定的三段式输出。
+
+再试几个：
+
+- `npm run s06 -- "s03_permission_gate/policy.ts"` —— 同一个模板，不同文件得到不同结论
+- 给 `review.md` 加一个 `${1:-README.md}` 默认值，然后 `npm run s06` 不带参数跑 —— 验证默认值生效
 
 > **真实彩蛋**：这个 `/review` 模板在开发本教程时，真的查出了 s02 `store.ts` 的并发 bug —— `loadTodos` 没进锁，`add × list` 同轮会读到写了一半的文件；而且 `writeFile` 非原子。修复（内部无锁 `readTodos` + 串行化读 + temp+rename 原子写）已经回填到 s02。这就是 prompt 模板的价值：把一次性的经验固化成可重复执行的流程。
 

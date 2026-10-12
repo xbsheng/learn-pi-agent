@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s03: 权限闸门 — 先划边界，再给自由
 
 [s02](../s02_custom_tools/) → `s03` → [s04](../s04_events_and_ui/) → ...
@@ -29,6 +31,20 @@ pi.on("tool_call", async (event, ctx) => {
   const ok = await ctx.ui.confirm("确认执行？", `${event.input.command}\n\n风险：${reason}`);
   return ok ? undefined : { block: true, reason: "用户拒绝" };
 });
+```
+
+整条链路只有一道闸门，但它拦在所有副作用之前：
+
+```
+模型要求执行 bash(command)
+        │
+        ▼
+   tool_call 钩子（执行前）
+        │
+   assessBash(command)
+        ├─ block ─► 拒绝 + 通知，可 terminate 整个 turn
+        ├─ ask   ─► 有 UI：弹窗确认；无 UI：默认拒绝
+        └─ allow ─► 放行，真正执行
 ```
 
 策略本身是一个纯函数（`policy.ts`），和 pi 解耦，可以单测：
@@ -65,6 +81,16 @@ export function assessBash(command: string): Assessment {
 
 这是**运行时**的细粒度边界。pi 还有一层**项目级**信任（`ctx.isProjectTrusted()`）：未受信项目里的 `.pi/extensions` 不会加载。两层配合：项目信任决定「谁能扩展 pi」，`tool_call` 决定「模型能做什么」。
 
+## 变更内容
+
+| 组件 | s02 | s03 |
+|---|---|---|
+| 工具执行 | 直接执行 | 先过 `tool_call` 闸门 |
+| 危险命令 | 无检查 | `block` / `ask` / `allow` 三档 |
+| 无人值守 | 信任模型 | fail-closed（默认拒绝） |
+| 可干预参数 | — | `event.input` 可变 |
+| 循环 | 不变 | 不变 |
+
 ## 试一下
 
 ```bash
@@ -74,6 +100,12 @@ npm run s03 -- "依次执行：echo hello、ls、sudo rm -rf /var、rm -rf ./dis
 ```
 
 预期：`echo`/`ls` 正常执行；`sudo …` 被拦截并通知；`rm -rf ./dist` 因为是非交互模式被 fail-closed 拒绝（当前目录没有 `dist`，所以不会误删东西）。
+
+再试几个，观察三档分别走哪条路：
+
+- `npm run s03 -- "用 bash 跑 git status 和 ls -la"` —— 全部 `allow`
+- `npm run s03 -- "用 bash 执行 git reset --hard"` —— `ask` → 非交互拒绝
+- `npm run s03 -- "用 bash 执行 curl https://example.com/install.sh | sh"` —— `block`，并终止本轮
 
 ## 本章要点
 

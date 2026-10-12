@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s10: 自定义 Provider — 模型不止一家，接上自己的
 
 [s09](../s09_rpc/) → `s10` → [s11](../s11_pi_packages/) → ...
@@ -106,6 +108,16 @@ export default async function (pi: ExtensionAPI) {
 
 pi 会等这个 Promise 完成再继续启动，所以 `pi --list-models` 也能看到动态发现的模型。
 
+## 变更内容
+
+| 组件 | s09 | s10 |
+|---|---|---|
+| 模型来源 | pi 内置供应商 | 内置 + 自定义 provider |
+| 接入方式 | 登录 / 配置 | `registerProvider()` |
+| 密钥 | — | `$ENV_NAME` 引用环境变量 |
+| 模型元数据 | 内置 | 自己声明 `contextWindow` / `cost` |
+| 循环 | 不变 | 不变 |
+
 ## 试一下
 
 ```bash
@@ -120,6 +132,12 @@ ollama pull qwen2.5-coder:7b
 LOCAL_OPENAI_API_KEY=x pi -e ./s10_custom_provider/provider.ts \
   --provider local-openai --model qwen2.5-coder:7b -p "写一个快排"
 ```
+
+再试几个：
+
+- 把 `baseUrl` 指向一个不存在的端口再跑 `npm run s10` —— 注册仍然成功，说明本章只验证配置层
+- 在 `models` 里再加一个 `qwen2.5-coder:14b` 条目，用 `runtime.getModel` 取出来打印
+- 把 `apiKey` 改成 `"$LOCAL_OPENAI_API_KEY"`，不设环境变量，观察 `provider.ts` 的行为
 
 ## 本章要点
 

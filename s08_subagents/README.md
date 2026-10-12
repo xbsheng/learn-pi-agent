@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s08: 子 Agent — 给子任务一份全新的 messages[]
 
 [s07](../s07_sessions/) → `s08` → [s09](../s09_rpc/) → ...
@@ -63,11 +65,21 @@ return { content: [{ type: "text", text: answer }], details: { ... } };
 2. **工具集要收窄。** 调查型子任务给只读工具（`read`/`grep`/`find`/`ls`）；需要改代码再给 `edit`/`write`。最小权限原则同样适用于子 agent。
 3. **返回结构要干净。** `content` 放结论（喂回主模型），`details` 放元数据（行数、耗时、文件列表），别把中间过程塞回去，否则隔离白做了。
 
-### 和 s06 的关系
+### 和「手写循环」版本的差别
 
-learn-claude-code 的 subagent 章节说的是同一件事：**子任务用全新的 `messages[]`，最终文本作为一条工具结果返回。** 区别只是 pi 里你不用手写循环，`createAgentSession()` 就是那个新 `messages[]`。
+从零实现子 agent，你要自己 new 一个 `messages[]`、跑循环、再把最终文本包成一条工具结果返回。pi 把这件事压缩成一句 **`createAgentSession()`** —— 它就是那个全新的 `messages[]`。
 
 > **注意**：pi 刻意不内置 sub agent，而是把它留给扩展（[examples/extensions/subagent.ts](https://github.com/badlogic/pi-mono)）。这正是「小核心 + 扩展」哲学 —— 你按自己的需要实现委派策略。
+
+## 变更内容
+
+| 组件 | s07 | s08 |
+|---|---|---|
+| 子任务上下文 | 与主会话共享 | 全新 `messages[]` |
+| 中间过程 | 进入主上下文 | 留在子会话，跑完即弃 |
+| 工具集 | 全部 | 可收窄（本章只读） |
+| 返回 | 全部消息 | 一条 `tool_result`（结论） |
+| 循环 | 不变 | 不变 |
 
 ## 试一下
 
@@ -77,6 +89,11 @@ npm run s08 -- "让子 agent 统计 s01 到 s08 各章 code.ts 的行数，你�
 ```
 
 观察主会话的事件流：只有一次 `delegate` 工具调用，然后直接出表。子 agent 读文件、跑命令的过程全部发生在它自己的上下文里，主会话的 `messages` 长度几乎没变。
+
+再试几个，重点对比「委派」和「不委派」：
+
+- `npm run s08 -- "让子 agent 找出本仓库里最大的 3 个 .ts 文件并给出总行数"` —— 子 agent 读很多文件，主会话只多一条结果
+- `npm run s08 -- "你自己统计 s01 到 s08 各章 code.ts 的行数"`（不委派）—— 同样的活，主会话消息数会明显变多
 
 ## 本章要点
 

@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s07: 会话与分支 — 上下文会满，要能存、能分叉
 
 [s06](../s06_prompt_templates/) → `s07` → [s08](../s08_subagents/) → ...
@@ -71,6 +73,16 @@ sm.branch(entries[3].id);             // 把叶子移回第 3 条，之后的新
 
 `AgentSessionRuntime` 还提供更高层的 `fork(entryId)` / `newSession()` / `switchSession()`，交互模式里的 `/fork`、`/new`、`/resume` 就是它们。
 
+## 变更内容
+
+| 组件 | s06 | s07 |
+|---|---|---|
+| 会话存储 | `inMemory` | JSONL 落盘 |
+| 恢复 | 无 | `continueRecent` / `open` |
+| 结构 | 线性 | `id` / `parentId` 树 |
+| 压缩 | s04 的结果截断 | 自动压缩 + `compact()` |
+| 循环 | 不变 | 不变 |
+
 ## 试一下
 
 ```bash
@@ -86,6 +98,11 @@ npm run s07
 ```bash
 ls ~/.pi/agent/sessions/    # 看落盘的 JSONL
 ```
+
+再多走一步：
+
+- 用 `cat` 打开上一步打印的会话文件，找 `parentId` 字段 —— 那就是会话树的边
+- 在 s07 代码里 `continueRecent` 之后加一行 `sm2.branch(sm2.getEntries()[0].id)`，再问一次暗号，观察历史被截断到分叉点
 
 ## 本章要点
 

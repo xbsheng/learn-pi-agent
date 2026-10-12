@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s05: Skill 按需加载 — 用到时再加载，别全塞 prompt
 
 [s04](../s04_events_and_ui/) → `s05` → [s06](../s06_prompt_templates/) → ...
@@ -77,6 +79,16 @@ pi --skill /path/to/skill # CLI 显式追加
 | 内容 | 指令 + 脚本 + 参考文档，可多文件 | 一段可展开的提示词 |
 | 适合 | 领域工作流、SOP、工具用法 | 常用的一句话指令 |
 
+## 变更内容
+
+| 组件 | s04 | s05 |
+|---|---|---|
+| 领域知识 | 只能塞进 system prompt | Skill 目录 |
+| 上下文占用 | 全文常驻 | 只有 name + description |
+| 触发 | 人工写死 | 模型按 description 自主判断 |
+| 内容形态 | 一段文字 | 指令 + 脚本 + 参考文档 |
+| 循环 | 不变 | 不变 |
+
 ## 试一下
 
 ```bash
@@ -87,6 +99,11 @@ npm run s05 -- "帮我生成这个项目的 release notes"
 观察：模型先 `read` 了 `SKILL.md`，再 `bash` 执行 `scripts/collect.sh`，最后按 skill 规定的分类格式输出。整个过程 system prompt 里只多了两行 —— 名字和描述。
 
 试试反例：`npm run s05 -- "1+1等于几"`。它不会去读 skill，因为 description 不匹配。
+
+再试几个：
+
+- `npm run s05 -- "生成 changelog，只保留 fix 分类"` —— 同一个 skill，模型按正文里的约束裁剪输出
+- 把 `SKILL.md` 的 `description` 改成「帮助处理发布」再跑一次 —— 命中率会明显下降，这就是 description 的分量
 
 ## 本章要点
 

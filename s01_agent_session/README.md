@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s01: AgentSession — pi 已经转着循环
 
 `s01` → [s02](../s02_custom_tools/) → s03 → s04 → ... → s12
@@ -9,7 +11,7 @@
 
 ## 问题
 
-learn-claude-code 的第一章，你要手写 `while True`，自己判断响应里有没有 `tool_use` 块，自己执行工具、追加结果、回到模型。
+如果从零手写一个 agent，第一件事就是一个 `while True`：判断模型响应里有没有 `tool_use` 块，有就执行工具、把结果追加回消息，再回到模型。
 
 但如果你用的是 pi，这个循环已经在本地实现好了，而且处理了一堆你还没想到的事：多轮流式、工具并行执行、错误重试、上下文自动压缩、会话持久化、中断恢复。
 
@@ -61,14 +63,14 @@ prompt(text)
                      └──────────► 回到 LLM
 ```
 
-对照 learn-claude-code 的循环，逐块对上：
+如果你手写过这个循环，可以逐块对照「自己实现」和「pi 内置」：
 
-| learn-claude-code（你写） | pi（内置） | 你在哪介入 |
+| 自己手写循环 | pi（内置） | 你在哪介入 |
 |---|---|---|
 | `client.messages.create(...)` | 内核帮调 LLM | `before_provider_request` 事件 |
 | 检查 `tool_use` block | 内核判断 | 无需介入 |
 | `TOOL_HANDLERS[name](**input)` | 内置 4 个工具 + 你的自定义工具 | `defineTool()` / `pi.registerTool()` |
-| 执行前安全检查 | 无，默认信任模型 | `tool_call` 钩子（s03） |
+| 直接执行，无检查 | 直接执行，默认信任模型 | `tool_call` 钩子（s03） |
 | `messages.append(...)` | `AgentSession` 状态 | `context` 事件 / `session.state.messages` |
 | — | 会话持久化、压缩、重试 | `SessionManager`（s07） |
 
@@ -88,6 +90,16 @@ session_start
         └─► agent_settled   ← 重试、压缩、follow-up 都清空后的最终静止点
 ```
 
+## 变更内容
+
+| 组件 | 之前（裸模型） | s01（pi） |
+|---|---|---|
+| Agent 循环 | 自己写 `while` + 判断 `stop_reason` | `createAgentSession()` 内置 |
+| 工具 | 自己实现并 dispatch | 内置 `read` / `write` / `edit` / `bash` |
+| 消息状态 | 手动维护 `messages[]` | `AgentSession` 维护 |
+| 持久化 | 无 | `SessionManager`（s07 展开） |
+| 循环 | — | 不变，后面每一章都不改 |
+
 ## 试一下
 
 ```bash
@@ -97,6 +109,13 @@ npm run s01 -- "创建 hello.txt，写入 'hi from pi'，再读回来确认"
 ```
 
 第三个命令能让你亲眼看到循环转了至少两轮：`write` 一次、`read` 一次，中间还有模型的推理。
+
+再试几个，每次都留意 `subscribe` 里的事件顺序：
+
+- `npm run s01 -- "找出所有提到 TODO 的文件并总结"`
+- `npm run s01 -- "把 README 的第一段翻译成英文"`
+
+模型是先 `read` 还是先 `bash`？一个 prompt 里它一共转了几轮？
 
 ## 本章要点
 

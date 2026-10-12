@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s11: Pi Package — 打包你的工具、技能、模板，分享出去
 
 [s10](../s10_custom_provider/) → `s11` → [s12](../s12_full_harness/) 
@@ -99,6 +101,16 @@ settings.json 里可以用对象形式过滤包内资源：
 
 `[]` 表示该类全不加载，`!pattern` 排除，`+path` 强制包含。
 
+## 变更内容
+
+| 组件 | s10 | s11 |
+|---|---|---|
+| 分发单位 | 散落的目录 | 一个 npm 包 |
+| 声明方式 | settings.json 手动指路 | `pi` 清单 / 约定目录 |
+| 安装 | 手动拷贝 | `pi install` |
+| 依赖 | — | 核心包 peer，运行时依赖 deps |
+| 循环 | 不变 | 不变 |
+
 ## 试一下
 
 ```bash
@@ -114,6 +126,11 @@ pi install ./s11_pi_packages/pi-example-bundle
 pi -p "现在几点？"        # 模型可调用 pkg_time
 /pkg-check                # 展开包内模板
 ```
+
+再试几个：
+
+- 删掉 `package.json` 里的 `pi` 清单，只留约定目录，再跑 `npm run s11` —— 资源仍会被发现
+- 在 settings 里用对象形式过滤：`"extensions": ["extensions/*.ts", "!extensions/legacy.ts"]`，观察加载数量变化
 
 ## 本章要点
 

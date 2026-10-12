@@ -35,7 +35,7 @@ pi 把这个房间提前搭好了一半：一个 agent 循环、四个内置工�
 
 ## 核心模式
 
-learn-claude-code 里那个 30 行的循环，在 pi 内部长这样：
+从零写一个 agent loop 大概只要 30 行，在 pi 内部它是这样转的：
 
 ```
 User --> messages[] --> LLM --> response
@@ -103,6 +103,9 @@ sNN_xxx/
 
 ## 与 learn-claude-code 的对应
 
+> 没读过 [learn-claude-code](https://github.com/shareAI-lab/learn-claude-code) 完全不影响本教程。
+> 下面这张表只是给想对照「从零手写」和「挂在 pi 上」两种路径的读者。
+
 | learn-claude-code | learn-pi-agent |
 |---|---|
 | 手写 agent loop（Python） | `createAgentSession()`（pi 已实现） |
@@ -114,6 +117,24 @@ sNN_xxx/
 | 手写 task/team/worktree | 会话树 + Pi Package + RPC |
 
 **Bash is all you need。扩展点才是 harness 工程师的全部。**
+
+## 教程网站
+
+仓库里的 `web/` 是配套教程站,样式参照 [learn.shareai.run](https://learn.shareai.run/zh/s01/) (Next.js + Tailwind 4 静态导出)。
+章节正文直接来自各目录的 `README.md`(中文) 与 `README.en.md`(English),由 `web/scripts/extract-content.ts` 抽取。
+站点默认中文(`/zh/`),英文在 `/en/`。
+
+```bash
+cd web
+npm install
+npm run dev     # http://localhost:3000 → /zh/
+npm run build   # 静态导出到 web/out
+```
+
+部署:`.github/workflows/deploy-vercel.yml` 在 push 到 `main` 时用 Vercel CLI 发布到生产。
+需要在 Vercel 建好项目(Root Directory 设为 `web`),并在仓库 secrets 配置
+`VERCEL_TOKEN`、`VERCEL_ORG_ID`、`VERCEL_PROJECT_ID`;
+再在 Vercel 环境变量里设 `NEXT_PUBLIC_SITE_URL` 为正式域名(sitemap / canonical 用)。
 
 ## 许可
 

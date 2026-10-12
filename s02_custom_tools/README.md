@@ -1,3 +1,5 @@
+[English](README.en.md) | 中文
+
 # s02: 自定义工具 — 加一个能力，只加一个 handler
 
 [s01](../s01_agent_session/) → `s02` → [s03](../s03_permission_gate/) → ...
@@ -43,7 +45,20 @@ const { session } = await createAgentSession({
 });
 ```
 
-就这些。**主循环一行都不用改** —— 这正是 learn-claude-code s02 所说的「循环不用动，新工具注册进 dispatch map 就行」。在 pi 里，这个 dispatch map 由内核维护，`customTools` 就是注册入口。
+模型侧看到的是一份工具定义，内核侧维护的是一张 dispatch map：
+
+```
+assistant: tool_use(todo_add, {task, priority})
+        │
+        ▼
+   pi dispatch map ──► defineTool().execute(params)
+        │                        │
+        │  typebox 校验参数       │  写 .todos.json
+        ▼                        ▼
+   tool_result ──────────► 回到模型，继续循环
+```
+
+就这些。**主循环一行都不用改** —— 加一个工具的本质就是往 dispatch map 里注册一条；在 pi 里这张 map 由内核维护，`customTools` 就是注册入口。
 
 ## 工作原理
 
@@ -99,8 +114,18 @@ function serialize<T>(fn: () => Promise<T>): Promise<T> {
 
 还有两个同源的细节，本章代码一并处理了：
 
-- **读也要进锁。** `todo_list` 和 `todo_add` 同轮出现时，读路径若不加锁会读到 `writeFile` 写了一半的文件（s06 的 `/review` 模板真的把这个问题扫出来了）。
+- **读也要进锁。** `todo_list` 和 `todo_add` 同轮出现时，读路径若不加锁会读到 `writeFile` 写了一半的文件（后来写 prompt 模板那一章时，`/review` 真的把这个问题扫了出来）。
 - **写要原子。** 先写临时文件再 `rename`，进程在写入中途被杀也不会留下半截 JSON。
+
+## 变更内容
+
+| 组件 | s01 | s02 |
+|---|---|---|
+| 工具来源 | 内置 4 个 | 内置 + `customTools` |
+| 加一个能力的成本 | 改内核 | 一个 `defineTool()` |
+| 参数校验 | 无 | typebox schema，调用前自动校验 |
+| 并发控制 | — | 工具自己负责（本章的串行化队列） |
+| 循环 | 不变 | 不变 |
 
 ## 试一下
 
@@ -112,6 +137,12 @@ npm test           # 含并行写入的回归测试
 ```
 
 你会看到模型自动决定调用 `todo_add` 三次、`todo_list` 一次。它是自己看 `description` 选的，代码里没有任何 if-else 路由。
+
+再试几个：
+
+- `npm run s02 -- "列出全部待办"` —— 只命中 `todo_list`
+- `npm run s02 -- "今天天气怎么样"` —— 两个工具都不该被调用
+- `npm run s02 -- "加三条待办：A、B、C，优先级都是 1"` —— 观察三个 `todo_add` 同轮并行，串行化队列保证不丢数据
 
 ## 本章要点
 
