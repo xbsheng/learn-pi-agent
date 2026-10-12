@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { I18nProvider } from "@/lib/i18n";
 import { Header } from "@/components/layout/header";
 import zh from "@/i18n/messages/zh.json";
@@ -61,6 +62,7 @@ export default async function RootLayout({
             {children}
           </main>
         </I18nProvider>
+        <Analytics />
       </body>
     </html>
   );

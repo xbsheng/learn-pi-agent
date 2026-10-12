@@ -12,6 +12,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "diff": "^8.0.3",
     "framer-motion": "^12.34.0",
     "lucide-react": "^0.564.0",
